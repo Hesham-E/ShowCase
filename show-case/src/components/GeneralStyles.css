@@ -1,0 +1,23 @@
+.HeaderLine {
+    color: white;
+    height: 0px;
+    width: 99vw;
+    margin-top: 2vh;
+    margin-bottom: 2vh;
+}
+
+.HeaderText {
+    font-size: 40px;
+    text-align: center;
+    align-self: center;
+    margin-top: 2vh;
+    margin-bottom: 2vh;
+}
+
+.BodyText {
+    font-size: 20px;
+    text-align: center;
+    align-self: center;
+    margin-top: 2vh;
+    margin-bottom: 2vh;
+}

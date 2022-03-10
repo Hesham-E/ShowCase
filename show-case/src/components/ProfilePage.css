@@ -1,0 +1,30 @@
+.ProfilePage {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: end;
+}
+
+.ProfilePic {
+    align-self: center;
+    height: 15vh;
+    border-radius: 20%;
+    margin-top: 1vh;
+}
+
+.SocialsButtons {
+    display: flex;
+    align-self: center;
+    justify-content: space-around;
+    width: 99vw;
+}
+
+.SocialButton {
+    background-color: #0F314C;
+    color: white;
+    border-radius: 20%;
+    width: auto;
+    font-size: 40px;
+    padding: 10px 60px;
+    cursor: pointer;
+}
