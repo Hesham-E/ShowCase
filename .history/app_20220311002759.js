@@ -53,17 +53,16 @@ app.use(
     key: "showcase_session_cookie",
     secret: "showcase_session_cookie_secret",
     store: new MySQLStore({
-      host: "127.0.0.1",
+      host: 'localhost',
       port: 3306,
-      user: "seng401",
-      password: "",
-      database: "user_cookies",
+      user: 'seng401',
+      database: 'user_cookies'
     }),
     resave: false,
     saveUninitialized: false,
     cookie: {
-      maxAge: 1000 * 60 * 60 * 24,
-    },
+      maxAge: 1000*60*60*24,
+    }
   })
 );
 
@@ -75,19 +74,18 @@ app.use(bodyParser.urlencoded({
 }));
 
 var connection = mysql.createConnection({
-  host: "localhost",
+  host: "127.0.0.1",
   user: "seng401",
-  password: "",
   port: 3306,
   database: "showcase_users",
   multipleStatements: true,
 });
 
-connection.connect(function(err) {
+mysql: connection.connect((err) => {
   if (!err) {
     console.log("Connected");
   } else {
-    console.log("Failed to connect: " + err.message);
+    console.log("Failed to connect");
   }
 });
 
@@ -247,7 +245,3 @@ app.get("/user-already-exists", function (req, res, next) {
 // export { userExists, generatePassword, passport };
 
 module.exports = app;
-
-app.listen(3000, () => {
-  console.log(`Example app listening on port 3000`);
-});

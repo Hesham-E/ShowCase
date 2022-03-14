@@ -56,7 +56,6 @@ app.use(
       host: "127.0.0.1",
       port: 3306,
       user: "seng401",
-      password: "",
       database: "user_cookies",
     }),
     resave: false,
@@ -75,7 +74,7 @@ app.use(bodyParser.urlencoded({
 }));
 
 var connection = mysql.createConnection({
-  host: "localhost",
+  host: "127.0.0.1",
   user: "seng401",
   password: "",
   port: 3306,
@@ -83,11 +82,11 @@ var connection = mysql.createConnection({
   multipleStatements: true,
 });
 
-connection.connect(function(err) {
+connection.connect(function(err, result) {
   if (!err) {
     console.log("Connected");
   } else {
-    console.log("Failed to connect: " + err.message);
+    console.log("Failed to connect");
   }
 });
 
@@ -247,7 +246,3 @@ app.get("/user-already-exists", function (req, res, next) {
 // export { userExists, generatePassword, passport };
 
 module.exports = app;
-
-app.listen(3000, () => {
-  console.log(`Example app listening on port 3000`);
-});
