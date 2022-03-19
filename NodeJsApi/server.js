@@ -19,7 +19,7 @@ app.use(
 
 app.use(cors());
 
-appp.use("/api", indexRouter);
+app.use("/api", indexRouter);
 
 app.use((err, req, res, next) => {
 
