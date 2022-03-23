@@ -62,20 +62,23 @@ router.get("/account", (req,res) => {
             });
         }
         return res.status(200).send({
-           msg : "successfully grabbed all accounts", 
+           msg : "successfully retrieved all accounts", 
         });
     });
 }
 );
 
 router.get("/account/:Account_ID", (res,req) => {
-    db.query(`select from account where = ${req.body.id}`, (err,result) =>{
+    db.query(`select from account where Account_ID = ${req.body.id}`, (err,result) =>{
         if(err){
             console.log(err);
             return res.status(400).send({
                 msg : err,
             });
         }
+        return res.status(200).send({
+            msg : `successfully retrieved account: ${req.body.id}`,
+        });
     });
 });
 
@@ -88,6 +91,9 @@ router.delete("/account/:Account_ID", (req,res) =>{
                msg : err, 
             });
         }
+        return res.status(200).send({
+            msg : `successfully deleted account : ${req.body.id}`,
+        });
     });
 }
 
@@ -209,9 +215,152 @@ router.delete("profile/delete/:accountID/:profileID", (req, res) => {
 // `Password` varchar(25) NOT NULL,
 // `First_Name` varchar(25) NOT NULL,
 // `Last_Name` varchar(25) NOT NULL
+/*
+CREATE TABLE `post` (
+  `Post_ID` int NOT NULL,
+  `Profile_ID` int NOT NULL,
+  `Account_ID` int NOT NULL,
+  `Caption` varchar(250) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `post_photos`
+--
+
+CREATE TABLE `post_photos` (
+  `Post_ID` int NOT NULL,
+  `Profile_ID` int NOT NULL,
+  `Account_ID` int NOT NULL,
+  `Photo_URL` varchar(50) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+*/
+router.post("/post_photos", (req,res)=>{
+db.query(`insert into post_photos (Post_ID, Profile_ID, Account_ID, Photo_URL) VALUES (
+    ${req.body.post_id}, ${req.body.profileID}, ${req.body.accountID}, ${req.body.photo_url}
+)`, (err,result)=>{
+    if(err){
+        console.log(err);
+        return res.status(400).send({
+            msg : err,
+        });
+    }
+    return res.status(200).send({
+        msg : "succesfully added a new post photo",
+    })
+});
+});
+
+router.get("/post_photos", (req,res) =>{
+    db.query("select * from post_photos", (err,result)=>{
+        if(err){
+            console.log(err);
+            return res.status(400).send({
+                msg : err,
+            });
+        }
+        return res.status(200).send({
+            msg : "successfully retrieved all post photos",
+        });
+
+    });
+
+});
+
+router.get("post_photos/:Post_ID", (req,res)=>{
+    db.query(`select from post_photos where Post_ID = ${req.body.id}`,(err,result)=>{
+        if(err){
+            console.log(err);
+            return res.status(400).send({
+                msg : err,
+            });
+        }
+
+        return res.status(200).send({
+            msg : `successfully retrieved post photo: ${req.body.id}`,
+        })
+    });
+
+});
+
+router.delete("post_photos/:Post_ID", (req,res)=>{
+    db.query(`delete from post_photos where Post_ID = ${req.body.id}`, (err,result) =>{
+        if(err){
+            console.log(err);
+            return res.status(400).send({
+                msg : err,
+            });
+        }
+        return res.status(200).send({
+            msg : `successfully deleted post photo: ${req.body.id}`,
+        });
+    });
+
+});
 
 
 
+router.post("/post", (req,res)=>{
+    db.query(`insert into post (Post_ID, Profile_ID, Account_ID, Caption) VALUES (${res.body.post_id}, ${res.body.profile_id}, ${res.body.account_id},
+         ${res.body.caption})`, (err,result)=>{
+        if(err){
+            console.log(err);
+            return res.status(400).send({
+                msg : err,
+            })
+        }
+        return res.status(200).send({
+            msg : "successfully added post",
+        })
+
+    });
+});
+
+router.get("/post", (req, res) => {
+db.query("select * from post", (err, result) =>{
+    if(err){
+        console.log(err);
+       return res.status(400).send({
+            msg : err,
+        });
+    }
+    return res.status(200).send({
+        msg : "successfully retrieved all posts",
+    })
+
+});
+
+});
+
+router.get("post/:Post_ID", (req, res) => {
+db.query(`select from post where Post_ID = ${req.body.id}`, (err,result) =>{
+    if(err){
+        console.log(err);
+        return res.status(400).send({
+            msg : err,
+        });
+    }
+    return res.status(200).send({
+        msg : `successfully retrieved post: ${req.body.id}`
+    });
+});
+});
+
+router.delete("post/:Post_ID",(req,res)=>{
+    db.query(`delete from post where Post_ID = ${req.body.id}`, (err,result)=>{
+        if(err){
+            console.log(err);
+            return res.status(400).send({
+                msg : err,
+            })
+        }
+
+        return res.status(200).send({
+            msg : `successfully deleted post: ${req.body.id}`,
+        })
+    });
+});
 
 function verifyToken(req, res, next){
     const bearerHeader = req.headers["authorization"];
