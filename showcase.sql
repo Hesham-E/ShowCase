@@ -22,6 +22,10 @@ SET time_zone = "+00:00";
 -- Database: `showcase`
 --
 
+DROP DATABASE IF EXISTS SHOWCASE;
+CREATE DATABASE SHOWCASE;
+USE SHOWCASE;
+
 -- --------------------------------------------------------
 
 --
@@ -46,18 +50,6 @@ INSERT INTO `account` (`Account_ID`, `Email`, `Password`, `First_Name`, `Last_Na
 -- --------------------------------------------------------
 
 --
--- Table structure for table `links`
---
-
-CREATE TABLE `links` (
-  `Profile_ID` int NOT NULL,
-  `Account_ID` int NOT NULL,
-  `Link` varchar(25) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- --------------------------------------------------------
-
---
 -- Table structure for table `post`
 --
 
@@ -65,9 +57,17 @@ CREATE TABLE `post` (
   `Post_ID` int NOT NULL,
   `Profile_ID` int NOT NULL,
   `Account_ID` int NOT NULL,
-  `Caption` varchar(250) NOT NULL
+  `Title` varchar(50),
+  `Caption` varchar(250) 
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+--
+-- Dumping data for table `post`
+--
+
+INSERT INTO `post` (`Post_ID`, `Profile_ID`, `Account_ID`, `Title`, `Caption`) VALUES
+(1, 1, 1, 'Automated Robot', 'look at this cool robot I built'),
+(2, 1, 1, 'Hackathon', 'participated in a hackathon this weekend!');
 -- --------------------------------------------------------
 
 --
@@ -81,6 +81,12 @@ CREATE TABLE `post_photos` (
   `Photo_URL` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+--
+-- Dumping data for table `post_photos`
+--
+
+INSERT INTO `post_photos` (`Post_ID`, `Profile_ID`, `Account_ID`, `Photo_URL`) VALUES
+(1, 1, 1, 'a/photo/url/here');
 -- --------------------------------------------------------
 
 --
@@ -90,10 +96,20 @@ CREATE TABLE `post_photos` (
 CREATE TABLE `profile` (
   `Profile_ID` int NOT NULL,
   `Account_ID` int NOT NULL,
-  `Profile_Picture_URL` varchar(50) NOT NULL,
-  `Degree` varchar(50) NOT NULL,
-  `Biography` varchar(250) NOT NULL
+  `Profile_Picture_URL` varchar(50),
+  `Degree` varchar(50),
+  `Biography` varchar(250),
+  `Resume` varchar(50),
+  `LinkedIn` varchar(50),
+  `GitHub` varchar(50)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Dumping data for table `profile`
+--
+
+INSERT INTO `profile` (`Profile_ID`, `Account_ID`, `Profile_Picture_URL`, `Degree`, `Biography`, `Resume`, `LinkedIn`, `GitHub`) VALUES
+(1, 1, NULL, 'Software Engineering', 'hello there', NULL, NULL, NULL);
 
 --
 -- Indexes for dumped tables
@@ -105,13 +121,6 @@ CREATE TABLE `profile` (
 ALTER TABLE `account`
   ADD PRIMARY KEY (`Account_ID`),
   ADD UNIQUE KEY `Email` (`Email`);
-
---
--- Indexes for table `links`
---
-ALTER TABLE `links`
-  ADD PRIMARY KEY (`Profile_ID`,`Account_ID`,`Link`),
-  ADD KEY `Links_AccountID_FK` (`Account_ID`);
 
 --
 -- Indexes for table `post`
@@ -150,45 +159,39 @@ ALTER TABLE `account`
 -- AUTO_INCREMENT for table `post`
 --
 ALTER TABLE `post`
-  MODIFY `Post_ID` int NOT NULL AUTO_INCREMENT;
+  MODIFY `Post_ID` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `profile`
 --
 ALTER TABLE `profile`
-  MODIFY `Profile_ID` int NOT NULL AUTO_INCREMENT;
+  MODIFY `Profile_ID` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- Constraints for dumped tables
 --
 
---
--- Constraints for table `links`
---
-ALTER TABLE `links`
-  ADD CONSTRAINT `Links_AccountID_FK` FOREIGN KEY (`Account_ID`) REFERENCES `account` (`Account_ID`) ON DELETE RESTRICT ON UPDATE RESTRICT,
-  ADD CONSTRAINT `Links_ProfileID_FK` FOREIGN KEY (`Profile_ID`) REFERENCES `profile` (`Profile_ID`) ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 --
 -- Constraints for table `post`
 --
 ALTER TABLE `post`
-  ADD CONSTRAINT `Post_AccountID_FK` FOREIGN KEY (`Account_ID`) REFERENCES `profile` (`Account_ID`) ON DELETE RESTRICT ON UPDATE RESTRICT,
-  ADD CONSTRAINT `Post_ProfileID_FK` FOREIGN KEY (`Profile_ID`) REFERENCES `profile` (`Profile_ID`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+  ADD CONSTRAINT `Post_AccountID_FK` FOREIGN KEY (`Account_ID`) REFERENCES `profile` (`Account_ID`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `Post_ProfileID_FK` FOREIGN KEY (`Profile_ID`) REFERENCES `profile` (`Profile_ID`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `post_photos`
 --
 ALTER TABLE `post_photos`
-  ADD CONSTRAINT `PostPhotos_AccountID_FK` FOREIGN KEY (`Account_ID`) REFERENCES `account` (`Account_ID`) ON DELETE RESTRICT ON UPDATE RESTRICT,
-  ADD CONSTRAINT `PostPhotos_PostID_FK` FOREIGN KEY (`Post_ID`) REFERENCES `post` (`Post_ID`) ON DELETE RESTRICT ON UPDATE RESTRICT,
-  ADD CONSTRAINT `PostPhotos_ProfileID_FK` FOREIGN KEY (`Profile_ID`) REFERENCES `profile` (`Profile_ID`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+  ADD CONSTRAINT `PostPhotos_AccountID_FK` FOREIGN KEY (`Account_ID`) REFERENCES `account` (`Account_ID`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `PostPhotos_PostID_FK` FOREIGN KEY (`Post_ID`) REFERENCES `post` (`Post_ID`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `PostPhotos_ProfileID_FK` FOREIGN KEY (`Profile_ID`) REFERENCES `profile` (`Profile_ID`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `profile`
 --
 ALTER TABLE `profile`
-  ADD CONSTRAINT `Profile_AccountID_FK` FOREIGN KEY (`Account_ID`) REFERENCES `account` (`Account_ID`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+  ADD CONSTRAINT `Profile_AccountID_FK` FOREIGN KEY (`Account_ID`) REFERENCES `account` (`Account_ID`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
