@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const db = require("./dbConnection");
+const db = require("./dbconnection");
 const { signupValidation, loginValidation } = require("./validation");
 const { validationResult } = require("express-validator");
 const bcrypt = require("bcryptjs");
@@ -60,44 +60,44 @@ router.get("/account", (req,res) => {
             return res.status(400).send({
                 msg : err,
             });
-        }
-        return res.status(200).send({
-           msg : "successfully retrieved all accounts", 
-        });
+        }else {
+        return res.send(result).status(200);
+    }
     });
 }
 );
 
-router.get("/account/:Account_ID", (res,req) => {
-    db.query(`select from account where Account_ID = ${req.body.id}`, (err,result) =>{
-        if(err){
-            console.log(err);
-            return res.status(400).send({
-                msg : err,
-            });
-        }
-        return res.status(200).send({
-            msg : `successfully retrieved account: ${req.body.id}`,
-        });
-    });
+router.get("/account/:Account_ID", (req,res) => {
+db.query(`SELECT * from account where Account_ID = ${req.params.Account_ID}`, (err,result) =>{
+    if(err){
+        console.log(err);
+        return res.status(400).send({
+            msg : err,
+        })
+    }else{
+        return res.send(result);
+    }
+}
+    
+);
 });
 
 router.delete("/account/:Account_ID", (req,res) =>{
-
-    db.query(`delete from account where = ${req.body.id}`, (err,result) =>{
+  
+    db.query(`DELETE from account where Account_ID = ${req.params.Account_ID}`, (err,result) =>{
         if(err){
             console.log(err);
             return res.status(400).send({
                msg : err, 
+              
             });
-        }
+        }else{
         return res.status(200).send({
-            msg : `successfully deleted account : ${req.body.id}`,
+            msg : `successfully deleted account : ${req.params.Account_ID}`,
         });
+    }
     });
-}
-
-);
+});
 
 
 // --- PROFILE ---//

@@ -11,17 +11,17 @@ app.use(bodyParser.urlencoded({extender : false}));
 app.use(bodyParser.json());
 
 const connectionString = {
-  host : "34.83.191.45",
+  host : "localhost",
   port : "3306",
   user : "root",
-  password : "seng401",
+  password : "password",
   database : "showcase",
 
 };
 
   const connection = mysql.createConnection(connectionString);
 
-  app.listen(3306, () => {
+  app.listen(3000, () => {
     console.log("Server is running! YESSSSSSSS");
   });
 
