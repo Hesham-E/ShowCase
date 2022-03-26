@@ -69,18 +69,17 @@ router.get("/account", (req,res) => {
 );
 
 router.get("/account/:Account_ID", (req, res) => {
-    db.query(
-      `select * from account where Account_ID = ${req.params.Account_ID}`,
-      (err, result) => {
-        if (err) {
-          console.log(err);
-          return res.status(400).send({
-            msg: err,
-          });
+    db.query(`select from account where Account_ID = ${req.body.id}`, (err,result) =>{
+        if(err){
+            console.log(err);
+            return res.status(400).send({
+                msg : err,
+            });
         }
-        return res.status(200).send(JSON.parse(JSON.stringify(result)));
-      }
-    );
+        return res.status(200).send({
+            msg : `successfully retrieved account: ${req.body.id}`,
+        });
+    });
 });
 
 router.delete("/account/:Account_ID", (req,res) =>{

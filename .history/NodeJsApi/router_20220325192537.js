@@ -78,7 +78,9 @@ router.get("/account/:Account_ID", (req, res) => {
             msg: err,
           });
         }
-        return res.status(200).send(JSON.parse(JSON.stringify(result)));
+        return res.status(200).send({
+          msg: JSON.parse(JSON.stringify(result))
+        });
       }
     );
 });
