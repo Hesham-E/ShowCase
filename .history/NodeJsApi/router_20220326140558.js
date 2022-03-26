@@ -95,7 +95,7 @@ router.delete("/account/:Account_ID", (req,res) =>{
           });
         }
         return res.status(200).send({
-          msg: `Successfully deleted account with ID: ${req.params.Account_ID}`,
+          msg: `Successfully deleted account : ${req.body.id}`,
         });
       }
     );
@@ -105,6 +105,7 @@ router.delete("/account/:Account_ID", (req,res) =>{
 
 
 // --- PROFILE ---//
+
 router.post("/profiles", (req, res) => {
     const accountID = req.body.accountID;
     const stmt = "INSERT INTO Profile (Account_ID, Profile_Picture_URL, Degree, Biography) VALUES (?, NULL, NULL, NULL)";
@@ -125,10 +126,12 @@ router.get("/profiles", (req, res) => {
 
 router.get("/profile/:profileID", (req, res) => {
     const id = req.params.profileID;
-    const stmt = "SELECT * FROM Profile WHERE Profile_ID = ?";
-    db.query(stmt, req.params.profileID, (err, result) => {
-      if (err) console.log(err);
-      else res.send(result);
+    const stmt = "SELECT FROM Profile WHERE Profile_ID = ?";
+    db.query (stmt, id, (err, result) => {
+        if (err) 
+            console.log(err);
+        else
+            res.send(result);
     });
 });
 
@@ -137,16 +140,18 @@ router.put("/profile/update/:profileID", (req, res) => {
     const url = req.body.url;
     const degree = req.body.degree;
     const bio = req.body.bio;
-    const stmt = "UPDATE Profile SET Profile_Picture_URL = ?, Degree = ?, Biography = ? WHERE Profile_ID = ?";
-    db.query(stmt, [url, degree, bio, req.params.profileID], (err, result) => {
-      if (err) console.log(err);
+    const stmt = 
+        "UPDATE Profile SET Profile_Picture_URL = ?, Degree = ?, Biography = ? WHERE Profile_ID = ?";
+    db.query(stmt, [url, degree, bio, id], (err, result) => {
+        if (err) 
+            console.log(err);
     });
 });
 
 router.delete("profile/delete/:profileID", (req, res) => {
     const id = req.params.profileID;
     const stmt = "DELETE FROM Profile WHERE Profile_ID = ?";
-    db.query(stmt, req.params.profileID, (err, result) => {
+    db.query(stmt, id, (err, result) => {
         if (err) 
             console.log(err);
     });
@@ -172,7 +177,7 @@ router.get("/links", (req, res) => {
         if (err) 
             console.log(err);
         else
-            res.send(JSON.parse(JSON.stringify(result)));
+            res.send(result);
     });
 });
 
@@ -324,43 +329,41 @@ db.query("select * from post", (err, result) =>{
             msg : err,
         });
     }
-    return res.status(200).send(JSON.parse(JSON.stringify(result)))
+    return res.status(200).send({
+        msg : "successfully retrieved all posts",
+    })
 
 });
 
 });
 
 router.get("post/:Post_ID", (req, res) => {
-db.query(
-  `select * from post where Post_ID = ${req.params.Post_ID}`,
-  (err, result) => {
-    if (err) {
-      console.log(err);
-      return res.status(400).send({
-        msg: err,
-      });
+db.query(`select from post where Post_ID = ${req.body.id}`, (err,result) =>{
+    if(err){
+        console.log(err);
+        return res.status(400).send({
+            msg : err,
+        });
     }
-    return res.status(200).send(JSON.parse(JSON.stringify(result)));
-  }
-);
+    return res.status(200).send({
+        msg : `successfully retrieved post: ${req.body.id}`
+    });
+});
 });
 
 router.delete("post/:Post_ID",(req,res)=>{
-    db.query(
-      `delete from post where Post_ID = ${req.params.Post_ID}`,
-      (err, result) => {
-        if (err) {
-          console.log(err);
-          return res.status(400).send({
-            msg: err,
-          });
+    db.query(`delete from post where Post_ID = ${req.body.id}`, (err,result)=>{
+        if(err){
+            console.log(err);
+            return res.status(400).send({
+                msg : err,
+            })
         }
 
         return res.status(200).send({
-          msg: `successfully deleted post: ${req.params.Post_ID}`,
-        });
-      }
-    );
+            msg : `successfully deleted post: ${req.body.id}`,
+        })
+    });
 });
 
 function verifyToken(req, res, next){
