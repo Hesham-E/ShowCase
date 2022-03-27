@@ -10,41 +10,57 @@ const res = require("express/lib/response");
 
 // --- ACCOUNT --- //
 
-router.post("/account", signupValidation, (req,res,next) =>{
-console.log("inside post /account");
-db.query(
-    `SELECT * FROM account WHERE LOWER(email) = LOWER(${db.escape( req.body.email)});`,
-    (err,result ) => {
-        console.log("inside first db.query account");
-        if(result.length){
-            console.log("sadge");
-            return res.status(409).send({
-                msg : "This user already exists!",
+// router.post("/account", signupValidation, (req,res,next) =>{
+// console.log("inside post /account");
+// db.query(
+//     `SELECT * FROM account WHERE LOWER(email) = LOWER(${db.escape( req.body.email)});`,
+//     (err,result ) => {
+//         console.log("inside first db.query account");
+//         if(result.length){
+//             console.log("sadge");
+//             return res.status(409).send({
+//                 msg : "This user already exists!",
+//             });
+//         }else {
+//             console.log("YES! SIGN IN IS GUD");
+//             db.query(
+//                `INSERT INTO account (Account_ID, Email, Password, First_Name, Last_Name)
+//                VALUES (${db.escape(req.body.accountID)}, ${req.body.email}
+//                , ${req.body.password}, ${req.body.firstName}, ${req.body.lastName})`, 
+//                (err, result) => {
+//                    console.log("inside second db.query account");
+//                    if(err){
+//                     console.log(err);
+//                     return res.status(400).send({
+//                         msg : err,
+//                     });
+//                    }
+
+//                    return res.status(201).send({
+//                     msg : `The email: ${req.body.email} is now registered!`,
+//                    });
+//                }
+
+//             );
+//         }
+//     }
+// );
+// });
+
+router.post("/account/:id/:email/:pass/:fName/:lName", (req,res)=> {
+    db.query(`insert into account (Account_ID, Email, Password, First_Name, Last_Name) VALUES (${req.params.id}, "${req.params.email}", "${req.params.pass}", "${req.params.fName}", "${req.params.lName}")`,
+    (err,result) =>{
+        if(err){
+            console.log(err);
+            return res.status(400).send({
+                msg: err,
             });
-        }else {
-            console.log("YES! SIGN IN IS GUD");
-            db.query(
-               `INSERT INTO account (Account_ID, Email, Password, First_Name, Last_Name)
-               VALUES (${db.escape(req.body.accountID)}, ${req.body.email}
-               , ${req.body.password}, ${req.body.firstName}, ${req.body.lastName})`, 
-               (err, result) => {
-                   console.log("inside second db.query account");
-                   if(err){
-                    console.log(err);
-                    return res.status(400).send({
-                        msg : err,
-                    });
-                   }
-
-                   return res.status(201).send({
-                    msg : `The email: ${req.body.email} is now registered!`,
-                   });
-               }
-
-            );
         }
-    }
-);
+        return res.status(200).send({
+            msg : `account added : ${req.params.email}`,
+        })
+    });
+
 
 });
 
@@ -55,66 +71,62 @@ router.get("/account", (req,res) => {
             return res.status(400).send({
                 msg : err,
             });
-        }
-        return res.status(200).send({
-           msg : "successfully retrieved all accounts", 
-        });
+        }else {
+        return res.send(result).status(200);
+    }
     });
 }
 );
 
-router.get("/account/:Account_ID", (req, res) => {
-    db.query(
-      `select * from account where Account_ID = ${req.params.Account_ID}`,
-      (err, result) => {
-        if (err) {
-          console.log(err);
-          return res.status(400).send({
-            msg: err,
-          });
-        }
-        return res.status(200).send(JSON.parse(JSON.stringify(result)));
-      }
-    );
+router.get("/account/:Account_ID", (req,res) => {
+db.query(`SELECT * from account where Account_ID = ${req.params.Account_ID}`, (err,result) =>{
+    if(err){
+        console.log(err);
+        return res.status(400).send({
+            msg : err,
+        })
+    }else{
+        return res.send(result);
+    }
+}
+    
+);
 });
 
 router.delete("/account/:Account_ID", (req,res) =>{
-
-    db.query(
-      `delete from account where Account_ID = ${req.params.Account_ID}`,
-      (err, result) => {
-        if (err) {
-          console.log(err);
-          return res.status(400).send({
-            msg: err,
-          });
-        }
+  
+    db.query(`DELETE from account where Account_ID = ${req.params.Account_ID}`, (err,result) =>{
+        if(err){
+            console.log(err);
+            return res.status(400).send({
+               msg : err, 
+              
+            });
+        }else{
         return res.status(200).send({
-          msg: `Successfully deleted account with ID: ${req.params.Account_ID}`,
+            msg : `successfully deleted account : ${req.params.Account_ID}`,
         });
-      }
-    );
-}
-
-);
+    }
+    });
+});
 
 
 // --- PROFILE ---//
-router.post("/profiles", (req, res) => {
+router.post("/profile", (req, res) => {
     const accountID = req.body.accountID;
-    const stmt = "INSERT INTO Profile (Account_ID, Profile_Picture_URL, Degree, Biography, Resume, LinkedIn, GitHub) VALUES (?, NULL, NULL, NULL, NULL, NULL, NULL)";
+    const stmt = "INSERT INTO profile (Account_ID, Profile_Picture_URL, Degree, Biography, Resume, LinkedIn, GitHub) VALUES (?, NULL, NULL, NULL, NULL, NULL, NULL)";
     db.query (stmt, accountID, (err, result) => {
         if (err) 
             console.log(err);
     });
 });
 
-router.get("/profiles", (req, res) => {
-    db.query ("SELECT * FROM Profile", (err, result) => {
+router.get("/profile", (req, res) => {
+    db.query ("SELECT * FROM profile", (err, result) => {
         if (err) 
-            console.log(err);
+           return console.log(err);
         else
-            res.send(result);
+          return res.send(result).status(200);
     });
 });
 

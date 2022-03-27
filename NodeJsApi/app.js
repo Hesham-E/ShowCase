@@ -11,10 +11,10 @@ app.use(bodyParser.urlencoded({extender : false}));
 app.use(bodyParser.json());
 
 const connectionString = {
-  host : "34.83.191.45",
+  host : "localhost",//34.83.191.45
   port : "3306",
   user : "root",
-  password : "seng401",
+  password : "password",
   database : "showcase",
 
 };
