@@ -30,5 +30,5 @@ app.use((err, req, res, next) => {
     });
 
 });
-// CHANGE TO APPROPRIATE PORT
+// CHANGE TO APPRORIATE PORT
 app.listen(8080, () => console.log("Server is running on port 8080"));
