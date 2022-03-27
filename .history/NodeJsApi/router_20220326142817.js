@@ -8,7 +8,12 @@ const jwt = require("jsonwebtoken");
 const res = require("express/lib/response");
 
 
-// --- ACCOUNT --- //
+// `Account_ID` int NOT NULL,
+// `Email` varchar(25) NOT NULL,
+// `Password` varchar(25) NOT NULL,
+// `First_Name` varchar(25) NOT NULL,
+// `Last_Name` varchar(25) NOT NULL
+
 
 router.post("/account", signupValidation, (req,res,next) =>{
 console.log("inside post /account");
@@ -102,7 +107,7 @@ router.delete("/account/:Account_ID", (req,res) =>{
 // --- PROFILE ---//
 router.post("/profiles", (req, res) => {
     const accountID = req.body.accountID;
-    const stmt = "INSERT INTO Profile (Account_ID, Profile_Picture_URL, Degree, Biography, Resume, LinkedIn, GitHub) VALUES (?, NULL, NULL, NULL, NULL, NULL, NULL)";
+    const stmt = "INSERT INTO Profile (Account_ID, Profile_Picture_URL, Degree, Biography) VALUES (?, NULL, NULL, NULL)";
     db.query (stmt, accountID, (err, result) => {
         if (err) 
             console.log(err);
@@ -127,41 +132,110 @@ router.get("/profile/:profileID", (req, res) => {
     });
 });
 
-// was not sure how to implement when there are multiple columns for the primary key
-router.put("/profile/update/:accountID/:profileID", (req, res) => {
+router.put("/profile/update/:profileID", (req, res) => {
     const id = req.params.profileID;
     const url = req.body.url;
     const degree = req.body.degree;
     const bio = req.body.bio;
-    const resume = req.body.resume;
-    const linkedin = req.body.linkedin;
-    const git = req.body.github;
     const stmt = 
-        "UPDATE Profile SET Profile_Picture_URL = ?, Degree = ?, Biography = ?, Resume = ?, LinkedIn = ?, GitHub = ? WHERE Profile_ID = ?";
-    db.query(stmt, [url, degree, bio, resume, linkedin, git, id], (err, result) => {
-        if (err) 
-            console.log(err);
-
-    const stmt = "UPDATE Profile SET Profile_Picture_URL = ?, Degree = ?, Biography = ? WHERE Profile_ID = ?";
+        "UPDATE Profile SET Profile_Picture_URL = ?, Degree = ?, Biography = ? WHERE Profile_ID = ?";
     db.query(stmt, [url, degree, bio, req.params.profileID], (err, result) => {
       if (err) console.log(err);
-
     });
 });
 
 router.delete("profile/delete/:profileID", (req, res) => {
     const id = req.params.profileID;
     const stmt = "DELETE FROM Profile WHERE Profile_ID = ?";
-    db.query(stmt, req.params.profileID, (err, result) => {
+    db.query(stmt, id, (err, result) => {
         if (err) 
             console.log(err);
     });
-}); 
+});
 
 
 
-// --- POST_PHOTOS --- //
+// --- LINKS --- //
 
+router.post("/links", (req, res) => {
+    const accountID = req.body.accountID;
+    const profileID = req.body.profileID;
+    const link = req.body.link;
+    const stmt = "INSERT INTO Links (Profile_ID, Account_ID, Link) VALUES (?, ?, ?)";
+    db.query (stmt, [profileID, accountID, link], (err, result) => {
+        if (err) 
+            console.log(err);
+    });
+});
+
+router.get("/links", (req, res) => {
+    db.query ("SELECT * FROM Links", (err, result) => {
+        if (err) 
+            console.log(err);
+        else
+            res.send(result);
+    });
+});
+
+router.get("/links/:accountID/:profileID", (req, res) => {
+    const accountID = req.params.accountID;
+    const profileID = req.params.profileID;
+    const stmt = "SELECT FROM Links WHERE Profile_ID = ? AND Account_ID = ?";
+    db.query (stmt, [profileID, accountID], (err, result) => {
+        if (err) 
+            console.log(err);
+        else
+            res.send(result);
+    });
+});
+
+router.put("/link/update/:accountID/:profileID", (req, res) => {
+    const accountID = req.params.accountID;
+    const profileID = req.params.profileID;
+    const newLink = req.params.body;
+    const stmt = "UPDATE Links SET Link = ? WHERE Account_ID = ? AND Profile_ID = ?";
+    db.query(stmt, [newLink, accountID, profileID], (err, result) => {
+        if (err) 
+            console.log(err);
+    });
+});
+
+router.delete("profile/delete/:accountID/:profileID", (req, res) => {
+    const accountID = req.params.accountID;
+    const profileID = req.params.profileID;
+    const stmt = "DELETE FROM Links WHERE Account_ID = ? AND Profile_ID = ?";
+    db.query(stmt, [accountID, profileID], (err, result) => {
+        if (err) 
+            console.log(err);
+    });
+});
+
+// `Account_ID` int NOT NULL,
+// `Email` varchar(25) NOT NULL,
+// `Password` varchar(25) NOT NULL,
+// `First_Name` varchar(25) NOT NULL,
+// `Last_Name` varchar(25) NOT NULL
+/*
+CREATE TABLE `post` (
+  `Post_ID` int NOT NULL,
+  `Profile_ID` int NOT NULL,
+  `Account_ID` int NOT NULL,
+  `Caption` varchar(250) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `post_photos`
+--
+
+CREATE TABLE `post_photos` (
+  `Post_ID` int NOT NULL,
+  `Profile_ID` int NOT NULL,
+  `Account_ID` int NOT NULL,
+  `Photo_URL` varchar(50) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+*/
 router.post("/post_photos", (req,res)=>{
 db.query(`insert into post_photos (Post_ID, Profile_ID, Account_ID, Photo_URL) VALUES (
     ${req.body.post_id}, ${req.body.profileID}, ${req.body.accountID}, ${req.body.photo_url}
@@ -226,11 +300,10 @@ router.delete("post_photos/:Post_ID", (req,res)=>{
 });
 
 
-// --- POST --- //
 
 router.post("/post", (req,res)=>{
-    db.query(`insert into post (Post_ID, Profile_ID, Account_ID, Title, Caption) VALUES (${res.body.post_id}, ${res.body.profile_id}, ${res.body.account_id},
-         ${res.body.title}, ${res.body.caption})`, (err,result)=>{
+    db.query(`insert into post (Post_ID, Profile_ID, Account_ID, Caption) VALUES (${res.body.post_id}, ${res.body.profile_id}, ${res.body.account_id},
+         ${res.body.caption})`, (err,result)=>{
         if(err){
             console.log(err);
             return res.status(400).send({
@@ -252,46 +325,42 @@ db.query("select * from post", (err, result) =>{
             msg : err,
         });
     }
-    return res.status(200).send(JSON.parse(JSON.stringify(result)))
+    return res.status(200).send({
+        msg : "successfully retrieved all posts",
+    })
 
 });
 
 });
 
 router.get("post/:Post_ID", (req, res) => {
-db.query(
-  `select * from post where Post_ID = ${req.params.Post_ID}`,
-  (err, result) => {
-    if (err) {
-      console.log(err);
-      return res.status(400).send({
-        msg: err,
-      });
+db.query(`select from post where Post_ID = ${req.body.id}`, (err,result) =>{
+    if(err){
+        console.log(err);
+        return res.status(400).send({
+            msg : err,
+        });
     }
-    return res.status(200).send(JSON.parse(JSON.stringify(result)));
-  }
-);
+    return res.status(200).send({
+        msg : `successfully retrieved post: ${req.body.id}`
+    });
+});
 });
 
 router.delete("post/:Post_ID",(req,res)=>{
-    db.query(
-      `delete from post where Post_ID = ${req.params.Post_ID}`,
-      (err, result) => {
-        if (err) {
-          console.log(err);
-          return res.status(400).send({
-            msg: err,
-          });
+    db.query(`delete from post where Post_ID = ${req.body.id}`, (err,result)=>{
+        if(err){
+            console.log(err);
+            return res.status(400).send({
+                msg : err,
+            })
         }
 
         return res.status(200).send({
-          msg: `successfully deleted post: ${req.params.Post_ID}`,
-        });
-      }
-    );
+            msg : `successfully deleted post: ${req.body.id}`,
+        })
+    });
 });
-
-
 
 function verifyToken(req, res, next){
     const bearerHeader = req.headers["authorization"];
