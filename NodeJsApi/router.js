@@ -141,12 +141,14 @@ router.put("/profile/update/:accountID/:profileID", (req, res) => {
     db.query(stmt, [url, degree, bio, resume, linkedin, git, id], (err, result) => {
         if (err) 
             console.log(err);
+    
 
     const stmt = "UPDATE Profile SET Profile_Picture_URL = ?, Degree = ?, Biography = ? WHERE Profile_ID = ?";
     db.query(stmt, [url, degree, bio, req.params.profileID], (err, result) => {
       if (err) console.log(err);
-
+      
     });
+});
 });
 
 router.delete("profile/delete/:profileID", (req, res) => {
@@ -305,4 +307,5 @@ function verifyToken(req, res, next){
     }
 
 }
+
 module.exports = router;
