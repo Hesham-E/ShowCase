@@ -48,7 +48,8 @@ const res = require("express/lib/response");
 // });
 
 router.post("/account/:id/:email/:pass/:fName/:lName", (req,res)=> {
-    db.query(`insert into account (Account_ID, Email, Password, First_Name, Last_Name) VALUES (${req.params.id}, "${req.params.email}", "${req.params.pass}", "${req.params.fName}", "${req.params.lName}")`,
+    db.query(`insert into account (Account_ID, Email, Password, First_Name, Last_Name) VALUES 
+    (${req.params.id}, "${req.params.email}", "${req.params.pass}", "${req.params.fName}", "${req.params.lName}")`,
     (err,result) =>{
         if(err){
             console.log(err);
@@ -112,12 +113,24 @@ router.delete("/account/:Account_ID", (req,res) =>{
 
 
 // --- PROFILE ---//
-router.post("/profile", (req, res) => {
-    const accountID = req.body.accountID;
-    const stmt = "INSERT INTO profile (Account_ID, Profile_Picture_URL, Degree, Biography, Resume, LinkedIn, GitHub) VALUES (?, NULL, NULL, NULL, NULL, NULL, NULL)";
-    db.query (stmt, accountID, (err, result) => {
-        if (err) 
+router.post("/profile/:pID/:aID/:picURL/:degree/:bio/:resume/:linkedIn/:github", (req, res) => {
+   // const accountID = req.body.aID;
+    // const stmt = `INSERT INTO profile (Profile_ID,Account_ID, Profile_Picture_URL, Degree, Biography, Resume, LinkedIn, GitHub) VALUES 
+    // (${req.body.pID}, ${req.body.aID}, "${req.body.picURL}", "${req.body.degree}", "${req.body.bio}", "${req.body.resume}", "${req.body.linkedIn}",
+    // "${req.body.github}")`;
+    db.query ( `INSERT INTO profile (Profile_ID ,Account_ID, Profile_Picture_URL, Degree, Biography, Resume, LinkedIn, GitHub) VALUES 
+    (${req.params.pID}, ${req.params.aID}, "${req.params.picURL}", "${req.params.degree}", "${req.params.bio}", "${req.params.resume}", "${req.params.linkedIn}",
+    "${req.params.github}")`, (err, result) => {
+        if (err) {
             console.log(err);
+            return res.status(400).send({
+                msg : err,
+            })
+        }
+        return res.status(200).send({
+            msg : `successfully added profile id: ${req.params.pID}`,
+        })
+        
     });
 });
 
@@ -132,10 +145,15 @@ router.get("/profile", (req, res) => {
 
 router.get("/profile/:profileID", (req, res) => {
     const id = req.params.profileID;
-    const stmt = "SELECT * FROM Profile WHERE Profile_ID = ?";
+    const stmt = "SELECT * FROM profile WHERE Profile_ID = ?";
     db.query(stmt, req.params.profileID, (err, result) => {
-      if (err) console.log(err);
-      else res.send(result);
+      if (err) {
+          console.log(err);
+          return res.status(400).send({
+              msg : err,
+          })
+        }
+      else res.status(200).send(result);
     });
 });
 
@@ -163,12 +181,20 @@ router.put("/profile/update/:accountID/:profileID", (req, res) => {
 });
 });
 
-router.delete("profile/delete/:profileID", (req, res) => {
-    const id = req.params.profileID;
-    const stmt = "DELETE FROM Profile WHERE Profile_ID = ?";
-    db.query(stmt, req.params.profileID, (err, result) => {
-        if (err) 
+router.delete("/profile/:profileID", (req, res) => {
+    // const id = req.params.profileID;
+   // const stmt = `DELETE FROM profile WHERE Profile_ID = ${req.params.profileID}`;
+    db.query(`DELETE FROM profile WHERE Profile_ID = ${req.params.profileID}`, (err, result) => {
+        if (err) {
             console.log(err);
+            return res.status(400).send({
+                msg: err,
+            });
+        }
+        return res.status(200).send({
+            msg : `successfully deleted profile id : ${req.params.profileID}`,
+        })
+
     });
 }); 
 
@@ -176,9 +202,9 @@ router.delete("profile/delete/:profileID", (req, res) => {
 
 // --- POST_PHOTOS --- //
 
-router.post("/post_photos", (req,res)=>{
+router.post("/post_photos/:post_id/:profileID/:accountID/:photo_url", (req,res)=>{
 db.query(`insert into post_photos (Post_ID, Profile_ID, Account_ID, Photo_URL) VALUES (
-    ${req.body.post_id}, ${req.body.profileID}, ${req.body.accountID}, ${req.body.photo_url}
+    ${req.params.post_id}, ${req.params.profileID}, ${req.params.accountID}, "${req.params.photo_url}"
 )`, (err,result)=>{
     if(err){
         console.log(err);
@@ -187,7 +213,7 @@ db.query(`insert into post_photos (Post_ID, Profile_ID, Account_ID, Photo_URL) V
         });
     }
     return res.status(200).send({
-        msg : "succesfully added a new post photo",
+        msg : `succesfully added a new post photo url : ${req.params.photo_url}`,
     })
 });
 });
@@ -200,16 +226,14 @@ router.get("/post_photos", (req,res) =>{
                 msg : err,
             });
         }
-        return res.status(200).send({
-            msg : "successfully retrieved all post photos",
-        });
+        return res.status(200).send(result);
 
     });
 
 });
 
-router.get("post_photos/:Post_ID", (req,res)=>{
-    db.query(`select from post_photos where Post_ID = ${req.body.id}`,(err,result)=>{
+router.get("/post_photos/:url", (req,res)=>{
+    db.query(`select * from post_photos where Photo_URL = "${req.params.url}"`,(err,result)=>{
         if(err){
             console.log(err);
             return res.status(400).send({
@@ -217,15 +241,13 @@ router.get("post_photos/:Post_ID", (req,res)=>{
             });
         }
 
-        return res.status(200).send({
-            msg : `successfully retrieved post photo: ${req.body.id}`,
-        })
+        return res.status(200).send(result);
     });
 
 });
 
-router.delete("post_photos/:Post_ID", (req,res)=>{
-    db.query(`delete from post_photos where Post_ID = ${req.body.id}`, (err,result) =>{
+router.delete("/post_photos/:url", (req,res)=>{
+    db.query(`delete from post_photos where Photo_URL = "${req.params.url}"`, (err,result) =>{
         if(err){
             console.log(err);
             return res.status(400).send({
@@ -233,7 +255,7 @@ router.delete("post_photos/:Post_ID", (req,res)=>{
             });
         }
         return res.status(200).send({
-            msg : `successfully deleted post photo: ${req.body.id}`,
+            msg : `successfully deleted post photo: ${req.params.url}`,
         });
     });
 
@@ -242,9 +264,9 @@ router.delete("post_photos/:Post_ID", (req,res)=>{
 
 // --- POST --- //
 
-router.post("/post", (req,res)=>{
-    db.query(`insert into post (Post_ID, Profile_ID, Account_ID, Title, Caption) VALUES (${res.body.post_id}, ${res.body.profile_id}, ${res.body.account_id},
-         ${res.body.title}, ${res.body.caption})`, (err,result)=>{
+router.post("/post/:post_id/:profile_id/:account_id/:title/:caption", (req,res)=>{
+    db.query(`insert into post (Post_ID, Profile_ID, Account_ID, Title, Caption) VALUES (${req.params.post_id}, ${req.params.profile_id}, ${req.params.account_id},
+         "${req.params.title}", "${req.params.caption}")`, (err,result)=>{
         if(err){
             console.log(err);
             return res.status(400).send({
@@ -252,7 +274,7 @@ router.post("/post", (req,res)=>{
             })
         }
         return res.status(200).send({
-            msg : "successfully added post",
+            msg : `successfully added post id : ${req.params.post_id}`,
         })
 
     });
@@ -272,9 +294,9 @@ db.query("select * from post", (err, result) =>{
 
 });
 
-router.get("post/:Post_ID", (req, res) => {
+router.get("/post/:Post_ID", (req, res) => {
 db.query(
-  `select * from post where Post_ID = ${req.params.Post_ID}`,
+  `select * from post WHERE Post_ID = ${req.params.Post_ID}`,
   (err, result) => {
     if (err) {
       console.log(err);
@@ -282,12 +304,13 @@ db.query(
         msg: err,
       });
     }
-    return res.status(200).send(JSON.parse(JSON.stringify(result)));
+    //return res.status(200).send(JSON.parse(JSON.stringify(result)));
+    return res.status(200).send(result);
   }
 );
 });
 
-router.delete("post/:Post_ID",(req,res)=>{
+router.delete("/post/:Post_ID",(req,res)=>{
     db.query(
       `delete from post where Post_ID = ${req.params.Post_ID}`,
       (err, result) => {
