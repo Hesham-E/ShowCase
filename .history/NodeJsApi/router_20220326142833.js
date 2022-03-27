@@ -172,7 +172,7 @@ router.get("/links", (req, res) => {
         if (err) 
             console.log(err);
         else
-            res.send(JSON.parse(JSON.stringify(result)));
+            res.send(result);
     });
 });
 
@@ -324,43 +324,41 @@ db.query("select * from post", (err, result) =>{
             msg : err,
         });
     }
-    return res.status(200).send(JSON.parse(JSON.stringify(result)))
+    return res.status(200).send({
+        msg : "successfully retrieved all posts",
+    })
 
 });
 
 });
 
 router.get("post/:Post_ID", (req, res) => {
-db.query(
-  `select * from post where Post_ID = ${req.params.Post_ID}`,
-  (err, result) => {
-    if (err) {
-      console.log(err);
-      return res.status(400).send({
-        msg: err,
-      });
+db.query(`select from post where Post_ID = ${req.body.id}`, (err,result) =>{
+    if(err){
+        console.log(err);
+        return res.status(400).send({
+            msg : err,
+        });
     }
-    return res.status(200).send(JSON.parse(JSON.stringify(result)));
-  }
-);
+    return res.status(200).send({
+        msg : `successfully retrieved post: ${req.body.id}`
+    });
+});
 });
 
 router.delete("post/:Post_ID",(req,res)=>{
-    db.query(
-      `delete from post where Post_ID = ${req.params.Post_ID}`,
-      (err, result) => {
-        if (err) {
-          console.log(err);
-          return res.status(400).send({
-            msg: err,
-          });
+    db.query(`delete from post where Post_ID = ${req.body.id}`, (err,result)=>{
+        if(err){
+            console.log(err);
+            return res.status(400).send({
+                msg : err,
+            })
         }
 
         return res.status(200).send({
-          msg: `successfully deleted post: ${req.params.Post_ID}`,
-        });
-      }
-    );
+            msg : `successfully deleted post: ${req.body.id}`,
+        })
+    });
 });
 
 function verifyToken(req, res, next){

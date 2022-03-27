@@ -357,7 +357,7 @@ router.delete("post/:Post_ID",(req,res)=>{
         }
 
         return res.status(200).send({
-          msg: `successfully deleted post: ${req.params.Post_ID}`,
+          msg: `successfully deleted post: ${req.body.id}`,
         });
       }
     );
