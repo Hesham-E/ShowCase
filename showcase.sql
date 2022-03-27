@@ -103,6 +103,8 @@ CREATE TABLE `profile` (
   `LinkedIn` varchar(50),
   `GitHub` varchar(50)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+INSERT INTO `profile` (`Profile_ID`,`Account_ID`, `Profile_Picture_URL`, `Degree`, `Biography`) VALUES
+(1,1, ``, 'cool degree', 'i am john');
 
 --
 -- Dumping data for table `profile`

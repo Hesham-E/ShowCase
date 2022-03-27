@@ -236,7 +236,7 @@ CREATE TABLE `post_photos` (
   `Photo_URL` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 */
-router.post("/post_photos", (req,res)=>{
+router.post("/post_photos/:post_id/:profileID/:accountID/:photo_url", (req,res)=>{
 db.query(`insert into post_photos (Post_ID, Profile_ID, Account_ID, Photo_URL) VALUES (
     ${req.body.post_id}, ${req.body.profileID}, ${req.body.accountID}, ${req.body.photo_url}
 )`, (err,result)=>{

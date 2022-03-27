@@ -22,7 +22,7 @@ const connectionString = {
   const connection = mysql.createConnection(connectionString);
 
   app.listen(3000, () => {
-    console.log("Server is running! YESSSSSSSS");
+    console.log("Server is running!");
   });
 
 // var path = require('path');
