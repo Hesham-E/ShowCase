@@ -128,6 +128,18 @@ router.delete("/account/:Account_ID", (req,res) =>{
 
 
 // --- PROFILE ---//
+
+router.post("/profile", (req, res) => {
+    const accountID = req.body.accountID;
+    const stmt = "INSERT INTO profile (Account_ID, Profile_Picture_URL, Degree, Biography, Resume, LinkedIn, GitHub) VALUES (?, NULL, NULL, NULL, NULL, NULL, NULL)";
+    db.query (stmt, accountID, (err, result) => {
+        if (err) 
+            console.log(err);
+    });
+});
+
+
+
 router.post("/profile/:pID/:aID/:picURL/:degree/:bio/:resume/:linkedIn/:github", (req, res) => {
    // const accountID = req.body.aID;
     // const stmt = `INSERT INTO profile (Profile_ID,Account_ID, Profile_Picture_URL, Degree, Biography, Resume, LinkedIn, GitHub) VALUES 
