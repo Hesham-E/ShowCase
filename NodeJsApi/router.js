@@ -93,6 +93,21 @@ db.query(`SELECT * from account where Account_ID = ${req.params.Account_ID}`, (e
 );
 });
 
+router.put("/account/:id/:email/:pass/:fName/:lName", (req,res)=> {
+    db.query(`UPDATE account SET Email = '${req.params.email}', Password = '${req.params.pass}', First_Name = '${req.params.fName}', Last_Name = '${req.params.lName}' WHERE Account_ID = ${req.params.id}`,
+    (err,result) =>{
+        if(err){
+            console.log(err);
+            return res.status(400).send({
+                msg: err,
+            });
+        }
+        return res.status(200).send({
+            msg : `account updated : ${req.params.email}`,
+        })
+    });
+});
+
 router.delete("/account/:Account_ID", (req,res) =>{
   
     db.query(`DELETE from account where Account_ID = ${req.params.Account_ID}`, (err,result) =>{
@@ -132,7 +147,7 @@ router.get("/profile", (req, res) => {
 
 router.get("/profile/:profileID", (req, res) => {
     const id = req.params.profileID;
-    const stmt = "SELECT * FROM Profile WHERE Profile_ID = ?";
+    const stmt = "SELECT * FROM profile WHERE Profile_ID = ?";
     db.query(stmt, req.params.profileID, (err, result) => {
       if (err) console.log(err);
       else res.send(result);
@@ -149,13 +164,13 @@ router.put("/profile/update/:accountID/:profileID", (req, res) => {
     const linkedin = req.body.linkedin;
     const git = req.body.github;
     const stmt = 
-        "UPDATE Profile SET Profile_Picture_URL = ?, Degree = ?, Biography = ?, Resume = ?, LinkedIn = ?, GitHub = ? WHERE Profile_ID = ?";
+        "UPDATE profile SET Profile_Picture_URL = ?, Degree = ?, Biography = ?, Resume = ?, LinkedIn = ?, GitHub = ? WHERE Profile_ID = ?";
     db.query(stmt, [url, degree, bio, resume, linkedin, git, id], (err, result) => {
         if (err) 
             console.log(err);
     
 
-    const stmt = "UPDATE Profile SET Profile_Picture_URL = ?, Degree = ?, Biography = ? WHERE Profile_ID = ?";
+    const stmt = "UPDATE profile SET Profile_Picture_URL = ?, Degree = ?, Biography = ? WHERE Profile_ID = ?";
     db.query(stmt, [url, degree, bio, req.params.profileID], (err, result) => {
       if (err) console.log(err);
       
@@ -165,7 +180,7 @@ router.put("/profile/update/:accountID/:profileID", (req, res) => {
 
 router.delete("profile/delete/:profileID", (req, res) => {
     const id = req.params.profileID;
-    const stmt = "DELETE FROM Profile WHERE Profile_ID = ?";
+    const stmt = "DELETE FROM profile WHERE Profile_ID = ?";
     db.query(stmt, req.params.profileID, (err, result) => {
         if (err) 
             console.log(err);
