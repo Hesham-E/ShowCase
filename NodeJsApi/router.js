@@ -94,6 +94,21 @@ db.query(`SELECT * from account where Account_ID = ${req.params.Account_ID}`, (e
 );
 });
 
+router.put("/account/:id/:email/:pass/:fName/:lName", (req,res)=> {
+    db.query(`UPDATE account SET Email = '${req.params.email}', Password = '${req.params.pass}', First_Name = '${req.params.fName}', Last_Name = '${req.params.lName}' WHERE Account_ID = ${req.params.id}`,
+    (err,result) =>{
+        if(err){
+            console.log(err);
+            return res.status(400).send({
+                msg: err,
+            });
+        }
+        return res.status(200).send({
+            msg : `account updated : ${req.params.email}`,
+        })
+    });
+});
+
 router.delete("/account/:Account_ID", (req,res) =>{
   
     db.query(`DELETE from account where Account_ID = ${req.params.Account_ID}`, (err,result) =>{
