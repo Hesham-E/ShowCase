@@ -78,7 +78,7 @@ CREATE TABLE `post_photos` (
   `Post_ID` int NOT NULL,
   `Profile_ID` int NOT NULL,
   `Account_ID` int NOT NULL,
-  `Photo_URL` varchar(50) NOT NULL
+  `Photo_URL` varchar(300) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
@@ -96,7 +96,7 @@ INSERT INTO `post_photos` (`Post_ID`, `Profile_ID`, `Account_ID`, `Photo_URL`) V
 CREATE TABLE `profile` (
   `Profile_ID` int NOT NULL,
   `Account_ID` int NOT NULL,
-  `Profile_Picture_URL` varchar(50),
+  `Profile_Picture_URL` varchar(300),
   `Degree` varchar(50),
   `Biography` varchar(250),
   `Resume` varchar(50),
