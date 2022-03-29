@@ -129,8 +129,8 @@ router.delete("/account/:Account_ID", (req,res) =>{
 
 // --- PROFILE ---//
 
-router.post("/profile", (req, res) => {
-    const accountID = req.body.accountID;
+router.post("/profile/:accountID", (req, res) => {
+    const accountID = req.params.accountID;
     const stmt = "INSERT INTO profile (Account_ID, Profile_Picture_URL, Degree, Biography, Resume, LinkedIn, GitHub) VALUES (?, NULL, NULL, NULL, NULL, NULL, NULL)";
     db.query (stmt, accountID, (err, result) => {
         if (err) 
