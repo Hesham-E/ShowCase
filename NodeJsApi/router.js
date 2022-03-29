@@ -249,6 +249,27 @@ router.post("/post_photos/:post_id/:profileID/:accountID/:photo_url", (req,res)=
     });
 });
 
+router.post ("/post_photos/:Post_ID/:Profile_ID/:Account_ID", (req,res) => {
+    const post_id = req.params.Post_ID;
+    const profile_id = req.params.Profile_ID;
+    const account_id = req.params.Account_ID;
+    const photo_url = req.body.Photo_URL;
+    const stmt = 
+        "insert into post_photos (Post_ID, Profile_ID, Account_ID, Photo_URL) VALUES (?,?,?,?)";
+    db.query(stmt, [post_id, profile_id, account_id, photo_url], (err, result) => { 
+
+        if(err){
+            console.log(err);
+            return res.status(400).send({
+                msg : err,
+            });
+        }
+        return res.status(200).send({
+            msg : `succesfully added a new post photo url : ${req.params.photo_url}`,
+        })
+    });
+});
+
 
 router.get("/post_photos", (req,res) =>{
     db.query("select * from post_photos", (err,result)=>{
@@ -329,13 +350,14 @@ router.post("/post/:profile_id/:account_id/:title/:caption", (req,res)=>{
 });
 
 router.get ("/post/last_id", (req, res) =>{
-    db.query("SELECT * FROM post Where PostID = (SELECT LAST_INSERT_ID())", (err, result) =>{
+    db.query("SELECT * FROM post Where Post_ID = (SELECT LAST_INSERT_ID())", (err, result) =>{
         if(err){
             console.log(err);
             return res.status(400).send({
                 msg : err,
             });
         }
+        console.log(result);
         return res.status(200).send(result);
     })
 });
