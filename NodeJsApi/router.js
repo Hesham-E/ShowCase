@@ -94,21 +94,6 @@ db.query(`SELECT * from account where Account_ID = ${req.params.Account_ID}`, (e
 );
 });
 
-router.put("/account/:id/:email/:pass/:fName/:lName", (req,res)=> {
-    db.query(`UPDATE account SET Email = '${req.params.email}', Password = '${req.params.pass}', First_Name = '${req.params.fName}', Last_Name = '${req.params.lName}' WHERE Account_ID = ${req.params.id}`,
-    (err,result) =>{
-        if(err){
-            console.log(err);
-            return res.status(400).send({
-                msg: err,
-            });
-        }
-        return res.status(200).send({
-            msg : `account updated : ${req.params.email}`,
-        })
-    });
-});
-
 router.delete("/account/:Account_ID", (req,res) =>{
   
     db.query(`DELETE from account where Account_ID = ${req.params.Account_ID}`, (err,result) =>{
@@ -182,13 +167,13 @@ router.put("/profile/update/:accountID/:profileID", (req, res) => {
     const linkedin = req.body.linkedin;
     const git = req.body.github;
     const stmt = 
-        "UPDATE profile SET Profile_Picture_URL = ?, Degree = ?, Biography = ?, Resume = ?, LinkedIn = ?, GitHub = ? WHERE Profile_ID = ?";
+        "UPDATE Profile SET Profile_Picture_URL = ?, Degree = ?, Biography = ?, Resume = ?, LinkedIn = ?, GitHub = ? WHERE Profile_ID = ?";
     db.query(stmt, [url, degree, bio, resume, linkedin, git, id], (err, result) => {
         if (err) 
             console.log(err);
     
 
-    const stmt = "UPDATE profile SET Profile_Picture_URL = ?, Degree = ?, Biography = ? WHERE Profile_ID = ?";
+    const stmt = "UPDATE Profile SET Profile_Picture_URL = ?, Degree = ?, Biography = ? WHERE Profile_ID = ?";
     db.query(stmt, [url, degree, bio, req.params.profileID], (err, result) => {
       if (err) console.log(err);
       
@@ -218,20 +203,21 @@ router.delete("/profile/:profileID", (req, res) => {
 // --- POST_PHOTOS --- //
 
 router.post("/post_photos/:post_id/:profileID/:accountID/:photo_url", (req,res)=>{
-db.query(`insert into post_photos (Post_ID, Profile_ID, Account_ID, Photo_URL) VALUES (
-    ${req.params.post_id}, ${req.params.profileID}, ${req.params.accountID}, "${req.params.photo_url}"
-)`, (err,result)=>{
-    if(err){
-        console.log(err);
-        return res.status(400).send({
-            msg : err,
-        });
-    }
-    return res.status(200).send({
-        msg : `succesfully added a new post photo url : ${req.params.photo_url}`,
-    })
+    db.query(`insert into post_photos (Post_ID, Profile_ID, Account_ID, Photo_URL) VALUES (
+        ${req.params.post_id}, ${req.params.profileID}, ${req.params.accountID}, "${req.params.photo_url}"
+    )`, (err,result)=>{
+        if(err){
+            console.log(err);
+            return res.status(400).send({
+                msg : err,
+            });
+        }
+        return res.status(200).send({
+            msg : `succesfully added a new post photo url : ${req.params.photo_url}`,
+        })
+    });
 });
-});
+
 
 router.get("/post_photos", (req,res) =>{
     db.query("select * from post_photos", (err,result)=>{
@@ -293,6 +279,34 @@ router.post("/post/:post_id/:profile_id/:account_id/:title/:caption", (req,res)=
         })
 
     });
+});
+
+router.post("/post/:profile_id/:account_id/:title/:caption", (req,res)=>{
+    db.query(`insert into post (Profile_ID, Account_ID, Title, Caption) VALUES (${req.params.profile_id}, ${req.params.account_id},
+         "${req.params.title}", "${req.params.caption}")`, (err,result)=>{
+        if(err){
+            console.log(err);
+            return res.status(400).send({
+                msg : err,
+            })
+        }
+        return res.status(200).send({
+            msg : `successfully added post`,
+        })
+
+    });
+});
+
+router.get ("/post/last_id", (req, res) =>{
+    db.query("SELECT * FROM post Where PostID = (SELECT LAST_INSERT_ID())", (err, result) =>{
+        if(err){
+            console.log(err);
+            return res.status(400).send({
+                msg : err,
+            });
+        }
+        return res.status(200).send(result);
+    })
 });
 
 router.get("/post", (req, res) => {
