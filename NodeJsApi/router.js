@@ -329,7 +329,7 @@ router.post("/post/:profile_id/:account_id/:title/:caption", (req,res)=>{
 });
 
 router.get ("/post/last_id", (req, res) =>{
-    db.query("SELECT * FROM post Where PostID = (SELECT LAST_INSERT_ID())", (err, result) =>{
+    db.query("SELECT * FROM post Where Post_ID = (SELECT LAST_INSERT_ID())", (err, result) =>{
         if(err){
             console.log(err);
             return res.status(400).send({
