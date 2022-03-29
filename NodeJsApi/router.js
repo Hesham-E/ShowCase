@@ -198,13 +198,13 @@ router.put("/profile/update/:accountID/:profileID", (req, res) => {
     const linkedin = req.body.linkedin;
     const git = req.body.github;
     const stmt = 
-        "UPDATE Profile SET Profile_Picture_URL = ?, Degree = ?, Biography = ?, Resume = ?, LinkedIn = ?, GitHub = ? WHERE Profile_ID = ?";
+        "UPDATE profile SET Profile_Picture_URL = ?, Degree = ?, Biography = ?, Resume = ?, LinkedIn = ?, GitHub = ? WHERE Profile_ID = ?";
     db.query(stmt, [url, degree, bio, resume, linkedin, git, id], (err, result) => {
         if (err) 
             console.log(err);
     
 
-    const stmt = "UPDATE Profile SET Profile_Picture_URL = ?, Degree = ?, Biography = ? WHERE Profile_ID = ?";
+    const stmt = "UPDATE profile SET Profile_Picture_URL = ?, Degree = ?, Biography = ? WHERE Profile_ID = ?";
     db.query(stmt, [url, degree, bio, req.params.profileID], (err, result) => {
       if (err) console.log(err);
       
