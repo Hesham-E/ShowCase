@@ -135,6 +135,10 @@ router.post("/profile/:accountID", (req, res) => {
     db.query (stmt, accountID, (err, result) => {
         if (err) 
             console.log(err);
+        else
+            res.status(200).send({
+                msg : `successfully added profile id: ${req.params.pID}`,
+            })
     });
 });
 
