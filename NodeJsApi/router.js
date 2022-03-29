@@ -249,15 +249,15 @@ router.post("/post_photos/:post_id/:profileID/:accountID/:photo_url", (req,res)=
     });
 });
 
-router.post ("/post_photos/:post_id/:profileID/:accountID", (req,res) => {
-    const post_id = req.params.post_id;
-    const profile_id = req.params.profileID;
-    const account_id = req.params.accountID;
-    const photo_url = req.body.photo_url;
+router.post ("/post_photos/:Post_ID/:Profile_ID/:Account_ID", (req,res) => {
+    const post_id = req.params.Post_ID;
+    const profile_id = req.params.Profile_ID;
+    const account_id = req.params.Account_ID;
+    const photo_url = req.body.Photo_URL;
     const stmt = 
         "insert into post_photos (Post_ID, Profile_ID, Account_ID, Photo_URL) VALUES (?,?,?,?)";
     db.query(stmt, [post_id, profile_id, account_id, photo_url], (err, result) => { 
-   
+
         if(err){
             console.log(err);
             return res.status(400).send({
@@ -357,6 +357,7 @@ router.get ("/post/last_id", (req, res) =>{
                 msg : err,
             });
         }
+        console.log(result);
         return res.status(200).send(result);
     })
 });
