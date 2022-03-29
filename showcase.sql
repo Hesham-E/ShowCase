@@ -85,8 +85,8 @@ CREATE TABLE `post_photos` (
 -- Dumping data for table `post_photos`
 --
 
-INSERT INTO `post_photos` (`Post_ID`, `Profile_ID`, `Account_ID`, `Photo_URL`) VALUES
-(1, 1, 1, 'a/photo/url/here');
+-- INSERT INTO `post_photos` (`Post_ID`, `Profile_ID`, `Account_ID`, `Photo_URL`) VALUES
+-- (1, 1, 1, 'a/photo/url/here');
 -- --------------------------------------------------------
 
 --
