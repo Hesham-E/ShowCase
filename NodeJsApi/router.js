@@ -270,6 +270,19 @@ router.post ("/post_photos/:Post_ID/:Profile_ID/:Account_ID", (req,res) => {
     });
 });
 
+router.put("/post_photos/:Post_ID", (req, res) => {
+    const id = req.params.Post_ID;
+    const url = req.body.Photo_URL;
+    const stmt = 
+        "UPDATE post_photos SET Photo_URL = ? WHERE Post_ID = ?";
+    db.query(stmt, [url, id], (err, result) => {
+        if (err) 
+            console.log(err);
+        else res.status(200).send(result);
+    
+    });
+});
+
 
 router.get("/post_photos", (req,res) =>{
     db.query("select * from post_photos", (err,result)=>{
@@ -346,6 +359,20 @@ router.post("/post/:profile_id/:account_id/:title/:caption", (req,res)=>{
             msg : `successfully added post`,
         })
 
+    });
+});
+
+router.put("/post/:Post_ID", (req, res) => {
+    const id = req.params.Post_ID;
+    const title = req.body.Title;
+    const caption = req.body.Caption;
+    const stmt = 
+        "UPDATE post SET Title = ?, Caption = ? WHERE Post_ID = ?";
+    db.query(stmt, [title, caption, id], (err, result) => {
+        if (err) 
+            console.log(err);
+        else res.status(200).send(result);
+    
     });
 });
 
